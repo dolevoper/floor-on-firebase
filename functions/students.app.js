@@ -1,37 +1,63 @@
+const admin = require('firebase-admin');
 const express = require('express');
 const cors = require('cors');
 const { urlencoded, json } = require('body-parser');
-const uuid = require('uuid');
 
 const app = express();
+const studentsCollection = admin.firestore().collection('students');
 
 app.use(cors());
 app.use(urlencoded({ extended: true }));
 app.use(json());
 
-app.get('/api/students', (_, res) => {
-    res.status(200);
-    res.json([]);
+app.get('/api/students', async (_, res, next) => {
+    try {
+        const students = await studentsCollection.get();
+
+        res.status(200);
+        res.json(students.docs.map(doc => ({
+            ...doc.data(),
+            id: doc.id
+        })));
+    } catch (err) {
+        next(err);
+    }
 });
 
-app.post('/api/students', (req, res) => {
-    const student = {
-        ...req.body,
-        id: uuid.v4()
-    };
+app.post('/api/students', async (req, res, next) => {
+    try {
+        const studentRef = await studentsCollection.add(req.body);
+        const student = {
+            ...req.body,
+            id: studentRef.id
+        };
 
-    res.status(201);
-    res.json(student);
+        res.status(201);
+        res.json(student);
+    } catch (err) {
+        next(err);
+    }
 });
 
-app.post('/api/students/:id/entrance', (req, res) => {
-    const entrance = {
-        ...req.body,
-        createdAt: new Date()
-    };
+app.post('/api/students/:id/entrance', async (req, res, next) => {
+    try {
+        const entranceData = {
+            ...req.body,
+            createdAt: admin.firestore.FieldValue.serverTimestamp()
+        };
 
-    res.status(201);
-    res.json(entrance);
+        const entranceRef = await studentsCollection.doc(req.params.id).collection('entrances').add(entranceData);
+        const entrance = {
+            ...req.body,
+            createdAt: new Date(),
+            id: entranceRef.id
+        };
+
+        res.status(201);
+        res.json(entrance);
+    } catch (err) {
+        next(err);
+    }
 });
 
 module.exports = app;
