@@ -36,23 +36,23 @@ export const StudentDialog = ({ student = {}, onStudentChange, onCreate, onClose
             <DialogTitle>New Student</DialogTitle>
             <DialogContent>
                 <TextField
-                    className="student-input"
-                    label="Name"
-                    leadingIcon={<MaterialIcon icon="person" />}>
-                    <Input name="name" value={student.name} onChange={handleChange} ref={nameInputRef} required />
+                    className='student-input'
+                    label='Name'
+                    leadingIcon={<MaterialIcon icon='person' />}>
+                    <Input name='name' value={student.name} onChange={handleChange} ref={nameInputRef} required />
                 </TextField>
                 <TextField
-                    className="student-input"
-                    label="Email"
-                    leadingIcon={<MaterialIcon icon="email" />}>
-                    <Input type="email" name="email" value={student.email} onChange={handleChange} ref={emailInputRef} required />
+                    className='student-input'
+                    label='Email'
+                    leadingIcon={<MaterialIcon icon='email' />}>
+                    <Input type='email' name='email' value={student.email} onChange={handleChange} ref={emailInputRef} required />
                 </TextField>
             </DialogContent>
             <DialogFooter>
-                <DialogButton action="cancel">Cancel</DialogButton>
+                <DialogButton action='cancel'>Cancel</DialogButton>
                 {
                     canSubmit() ?
-                        <DialogButton action="create" isDefault raised>Create</DialogButton> :
+                        <DialogButton action='create' isDefault raised>Create</DialogButton> :
                         <Button disabled raised>Create</Button>
                 }
             </DialogFooter>

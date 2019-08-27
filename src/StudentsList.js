@@ -24,6 +24,10 @@ export const StudentsList = ({ students, onPriceSelected }) => {
         return <Body1 className='mdc-theme--text-secondary-on-light'>No students. Yet...</Body1>;
     }
 
+    const handlePriceSelected = studentId => price => {
+        onPriceSelected && onPriceSelected(studentId, price);
+    };
+
     return (
         <List twoLine nonInteractive>
             {
@@ -33,7 +37,7 @@ export const StudentsList = ({ students, onPriceSelected }) => {
                         primaryText={student.name}
                         secondaryText={student.email}
                     />
-                    <ListItemMeta meta={<AvailablePrices onPriceSelected={onPriceSelected} />} />
+                    <ListItemMeta meta={<AvailablePrices onPriceSelected={handlePriceSelected(student.id)} />} />
                 </ListItem>)
             }
         </List>
