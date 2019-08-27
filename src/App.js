@@ -20,6 +20,8 @@ function App() {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
+        setError();
+
         const res = await studentsApi.get();
 
         setStudents(res.data);
@@ -40,6 +42,8 @@ function App() {
 
   const handleCreateStudent = async () => {
     try {
+      setError();
+
       const res = await studentsApi.post('', currentStudent);
 
       setStudents([...students, res.data]);
@@ -51,7 +55,9 @@ function App() {
 
   const handlePriceSelected = async (studentId, price) => {
     try {
-      await studentsApi.post(`/${studentId}`, { price });
+      setError();
+      
+      await studentsApi.post(`/${studentId}/entrance`, { price });
     } catch (err) {
       console.error(err);
       setError('Failed recording student entrance.');
