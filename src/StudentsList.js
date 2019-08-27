@@ -5,7 +5,7 @@ import MaterialIcon from '@material/react-material-icon';
 import { Body1 } from '@material/react-typography';
 import { ChipSet, Chip } from '@material/react-chips';
 
-const AvailablePrices = forwardRef(({ className, onPriceSelected }, ref) => {
+const StudentMeta = forwardRef(({ entranceCount = 0, className, onPriceSelected }, ref) => {
     const handlePriceSelected = price => () => {
         onPriceSelected && onPriceSelected(price);
     };
@@ -13,8 +13,8 @@ const AvailablePrices = forwardRef(({ className, onPriceSelected }, ref) => {
     return (
         <ChipSet ref={ref} className={classnames(className)}>
             <Chip label='30' onClick={handlePriceSelected(30)} />
-            <Chip label='35' onClick={handlePriceSelected(35)} />
             <Chip label='40' onClick={handlePriceSelected(40)} />
+            <Chip label={entranceCount} className='mdc-theme--secondary-bg mdc-theme--text-secondary-on-dark' />
         </ChipSet>
     );
 });
@@ -37,7 +37,9 @@ export const StudentsList = ({ students, onPriceSelected }) => {
                         primaryText={student.name}
                         secondaryText={student.email}
                     />
-                    <ListItemMeta meta={<AvailablePrices onPriceSelected={handlePriceSelected(student.id)} />} />
+                    <ListItemMeta meta={
+                        <StudentMeta entranceCount={student.entranceCount} onPriceSelected={handlePriceSelected(student.id)} />
+                    } />
                 </ListItem>)
             }
         </List>
