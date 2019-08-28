@@ -23,7 +23,7 @@ app.use(async ({ token }, res, next) => {
 
     try {
         await admin.auth().verifyIdToken(token);
-    } catch {
+    } catch (err) {
         console.log('invalid token');
         res.status(401);
         res.send('unauthorized');
