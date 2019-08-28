@@ -2,6 +2,7 @@ const admin = require('firebase-admin');
 const express = require('express');
 const cors = require('cors');
 const { urlencoded, json } = require('body-parser');
+const bearerToken = require('express-bearer-token');
 
 const app = express();
 const studentsCollection = admin.firestore().collection('students');
@@ -9,6 +10,29 @@ const studentsCollection = admin.firestore().collection('students');
 app.use(cors());
 app.use(urlencoded({ extended: true }));
 app.use(json());
+
+app.use(bearerToken());
+app.use(async ({ token }, res, next) => {
+    if (!token) {
+        console.log('not token');
+        res.status(401);
+        res.send('unauthorized');
+
+        return;
+    }
+
+    try {
+        await admin.auth().verifyIdToken(token);
+    } catch {
+        console.log('invalid token');
+        res.status(401);
+        res.send('unauthorized');
+
+        return;
+    }
+
+    next();
+});
 
 app.get('/api/students', async (_, res, next) => {
     try {
