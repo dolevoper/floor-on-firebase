@@ -4,6 +4,7 @@ import MaterialIcon from '@material/react-material-icon';
 import { Headline6, Body1 } from '@material/react-typography'
 import Fab from '@material/react-fab';
 import TextField, { Input } from '@material/react-text-field';
+import LinearProgress from '@material/react-linear-progress';
 
 import './App.scss';
 import { StudentsList } from './StudentsList';
@@ -16,10 +17,12 @@ function App() {
   const [studentDialogOpen, setStudentDialogOpen] = useState(false);
   const [currentStudent, setCurrentStudent] = useState({ name: '', email: '' });
   const [error, setError] = useState();
+  const [showProgress, setShowProgress] = useState(false);
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
+        setShowProgress(true);
         setError();
 
         const res = await studentsApi.get();
@@ -28,6 +31,8 @@ function App() {
       } catch (err) {
         console.error(err);
         setError('Failed fetching students.');
+      } finally {
+        setShowProgress(false);
       }
     };
 
@@ -43,6 +48,7 @@ function App() {
   const handleCreateStudent = async () => {
     try {
       setError();
+      setShowProgress(true);
 
       const res = await studentsApi.post('', currentStudent);
 
@@ -50,17 +56,26 @@ function App() {
     } catch (err) {
       console.error(err);
       setError('Failed creating student.');
+    } finally {
+      setShowProgress(false);
     }
   };
 
   const handlePriceSelected = async (studentId, price) => {
     try {
       setError();
-      
+      setShowProgress(true);
+
       await studentsApi.post(`/${studentId}/entrance`, { price });
+
+      setStudents(students.map(student => student.id === studentId ?
+        { ...student, entranceCount: student.entranceCount ? student.entranceCount + 1 : 1 } :
+        student));
     } catch (err) {
       console.error(err);
       setError('Failed recording student entrance.');
+    } finally {
+      setShowProgress(false);
     }
   };
 
@@ -71,6 +86,7 @@ function App() {
           <Cell></Cell>
           <Cell columns={4}>
             <Headline6>Floor on Firebase</Headline6>
+            {showProgress && <LinearProgress />}
             {error && <Body1 className='mdc-theme--error'>{error}</Body1>}
           </Cell>
         </Row>
